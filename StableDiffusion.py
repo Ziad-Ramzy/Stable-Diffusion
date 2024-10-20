@@ -12,7 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm
 import numpy as np
-from Unet import UNetModel
+from StableDiffusion.Unet import UNetModel
 from transformers import CLIPTextModel, CLIPTokenizer, AutoModel
 from diffusers import StableDiffusionPipeline
 from State_dict import load_state_dict
@@ -267,28 +267,3 @@ class StableDiffusion(nn.Module):
             latent, e_t, alphas, alphas_prev)
 
         return x_prev
-
-
-if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(
-        description='Run Stable Diffusion', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--model_name', type=str,
-                        default='CompVis/stable-diffusion-v-1-4', help="Model name on Hugging Face")
-    parser.add_argument(
-        '--prompt', type=str, default="a horse sized cat eating a bagel", help="Phrase to render")
-    parser.add_argument('--out', type=str, default=Path(tempfile.gettempdir()
-                                                        ) / "rendered.png", help="Output filename")
-    parser.add_argument('--seed', type=int, help="Set the random latent seed")
-    args = parser.parse_args()
-
-    # Initialize model
-    model = StableDiffusion()
-
-    # Load weights from Hugging Face
-    model.load_weights(args.model_name)
-
-    # Example usage of the model
-    if args.seed is not None:
-        torch.manual_seed(args.seed)
-    latent = torch.randn(1, 4, 64, 64)
